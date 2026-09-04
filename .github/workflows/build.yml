@@ -52,4 +52,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MouseLock-API13
-          path: ./MouseLock/bin/x64/Release/MouseLock/latest.zip
+          path: ./MouseLock/bin/Release/MouseLock/latest.zip
