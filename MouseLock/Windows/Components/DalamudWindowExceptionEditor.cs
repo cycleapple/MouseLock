@@ -16,16 +16,16 @@ internal sealed class DalamudWindowExceptionEditor(Action save)
         var suggestedWindowPattern = GetSuggestedWindowPattern(focus.WindowName);
         var canUseExceptions = conditions.DisableWhenDalamudWindowFocused;
 
-        ConfigWindow.DrawSection("Dalamud window exceptions");
+        ConfigWindow.DrawSection("Dalamud 視窗例外");
         using (ImRaii.Disabled(!canUseExceptions))
         {
-            ImGui.TextDisabled("Allow specific Dalamud/ImGui windows or child-window prefixes to keep MouseLock active.");
-            ImGui.TextWrapped($"Last external window system: {ConfigWindow.DisplayAddonName(focus.WindowSystemNamespace)}");
-            ImGui.TextWrapped($"Last external window: {ConfigWindow.DisplayAddonName(focus.WindowName)}");
+            ImGui.TextDisabled("允許指定的 Dalamud／ImGui 視窗或子視窗前綴在開啟時維持 MouseLock。");
+            ImGui.TextWrapped($"最近的外部視窗系統：{ConfigWindow.DisplayAddonName(focus.WindowSystemNamespace)}");
+            ImGui.TextWrapped($"最近的外部視窗：{ConfigWindow.DisplayAddonName(focus.WindowName)}");
 
             if (!string.IsNullOrEmpty(focus.WindowName))
             {
-                if (ImGui.SmallButton("Allow exact window"))
+                if (ImGui.SmallButton("允許此視窗"))
                 {
                     AddAllowedWindowName(conditions, focus.WindowName);
                 }
@@ -33,7 +33,7 @@ internal sealed class DalamudWindowExceptionEditor(Action save)
                 if (!string.IsNullOrEmpty(suggestedWindowPattern))
                 {
                     ImGui.SameLine();
-                    if (ImGui.SmallButton("Allow window family"))
+                    if (ImGui.SmallButton("允許此視窗群組"))
                     {
                         AddAllowedWindowName(conditions, suggestedWindowPattern);
                     }
@@ -43,7 +43,7 @@ internal sealed class DalamudWindowExceptionEditor(Action save)
             if (!string.IsNullOrEmpty(focus.WindowSystemNamespace))
             {
                 ImGui.SameLine();
-                if (ImGui.SmallButton("Allow entire window system"))
+                if (ImGui.SmallButton("允許整個視窗系統"))
                 {
                     AddAllowedWindowSystemNamespace(conditions, focus.WindowSystemNamespace);
                 }
@@ -51,17 +51,17 @@ internal sealed class DalamudWindowExceptionEditor(Action save)
 
             if (focus.IsEmpty)
             {
-                ImGui.TextDisabled("Focus another plugin window, then return here to allow it.");
+                ImGui.TextDisabled("請先將焦點移至其他插件視窗，再返回此處將它加入允許清單。");
             }
 
-            ImGui.TextDisabled("Entries ending in * match by prefix, which is useful for plugin child windows with generated names.");
+            ImGui.TextDisabled("以 * 結尾的項目會比對名稱前綴，適合名稱由插件動態產生的子視窗。");
             DrawAllowedWindowNameList(conditions);
             DrawAllowedWindowSystemNamespaceList(conditions);
         }
 
         if (!canUseExceptions)
         {
-            ImGui.TextDisabled("Enable the Dalamud/ImGui window pause option above to use exceptions.");
+            ImGui.TextDisabled("請先啟用上方的 Dalamud／ImGui 視窗暫停選項，才能使用例外清單。");
         }
     }
 
@@ -102,10 +102,10 @@ internal sealed class DalamudWindowExceptionEditor(Action save)
             .OrderBy(windowName => windowName, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        ImGui.TextUnformatted("Allowed Dalamud windows / prefixes");
+        ImGui.TextUnformatted("允許的 Dalamud 視窗／前綴");
         if (windowNames.Count == 0)
         {
-            ImGui.TextDisabled("None");
+            ImGui.TextDisabled("無");
             return;
         }
 
@@ -115,7 +115,7 @@ internal sealed class DalamudWindowExceptionEditor(Action save)
             ImGui.SameLine();
 
             using var id = ImRaii.PushId($"AllowedDalamudWindow{windowName}");
-            if (ImGui.SmallButton("Remove"))
+            if (ImGui.SmallButton("移除"))
             {
                 RemoveAllowedWindowName(conditions, windowName);
                 return;
@@ -130,10 +130,10 @@ internal sealed class DalamudWindowExceptionEditor(Action save)
             .OrderBy(windowSystemNamespace => windowSystemNamespace, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        ImGui.TextUnformatted("Allowed entire Dalamud window systems");
+        ImGui.TextUnformatted("允許的完整 Dalamud 視窗系統");
         if (windowSystemNamespaces.Count == 0)
         {
-            ImGui.TextDisabled("None");
+            ImGui.TextDisabled("無");
             return;
         }
 
@@ -143,7 +143,7 @@ internal sealed class DalamudWindowExceptionEditor(Action save)
             ImGui.SameLine();
 
             using var id = ImRaii.PushId($"AllowedDalamudWindowSystem{windowSystemNamespace}");
-            if (ImGui.SmallButton("Remove"))
+            if (ImGui.SmallButton("移除"))
             {
                 RemoveAllowedWindowSystemNamespace(conditions, windowSystemNamespace);
                 return;

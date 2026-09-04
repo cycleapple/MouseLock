@@ -1,20 +1,24 @@
-# API 13 port
-- Ported the plugin lifecycle from API 15's asynchronous interface to API 13.
-- Added API 13-compatible camera, UI input, mouse drag, and cursor recenter bindings.
-- Added the standalone manifest required by the API 13 packager.
+# 1.0.0.4
+- 完成首次啟動、設定分頁、狀態列、提示、通知與聊天指令回饋的台灣繁中翻譯。
+- 保留指令 token、設定鍵、輸入綁定、IPC 與 Hook 邏輯。
+
+# API 13 移植
+- 將 API 15 非同步介面的插件生命週期移植至 API 13。
+- 新增相容 API 13 的鏡頭、介面輸入、滑鼠拖曳與游標置中綁定。
+- 新增 API 13 封裝工具所需的獨立 manifest。
 
 # 1.0.0.3
-- Added a true toggle option for tap release, so the cursor can stay free until you tap the modifier again.
-- The existing “release until world click or next tap” behavior is still available and remains the default.
-- Made tap release safer around Alt+Tab and other modifier combinations.
-- Clarified several settings descriptions, especially tap release, resume behavior, and LMB + RMB movement.
+- 新增真正的輕按切換選項，游標可保持自由，直到再次輕按修飾鍵。
+- 保留原有的「釋放至點擊遊戲世界或再次輕按」行為，並維持為預設值。
+- 改善 Alt+Tab 與其他修飾鍵組合下的輕按釋放安全性。
+- 釐清多項設定說明，特別是輕按釋放、恢復行為及滑鼠左右鍵移動。
 
 # 1.0.0.2
-- Implement native LMB+RMB movement (this disables other LMB/RMB bindings).
-- Fix a bunch of misc bugs.
+- 實作原生的滑鼠左右鍵移動功能（會停用其他滑鼠左右鍵綁定）。
+- 修正多項雜項問題。
 
 # 1.0.0.1
-- Made some performance optimizations
+- 改善效能。
 
 # 1.0.0.0
-- Initial Release
+- 首次發布。

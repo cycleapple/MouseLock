@@ -14,7 +14,7 @@ namespace MouseLock.Windows.Components;
 
 internal sealed class ConfigurationTransferPanel(SystemConfiguration config)
 {
-    private const string ConfirmationPopupName = "Confirm configuration change";
+    private const string ConfirmationPopupName = "確認變更設定";
     private const float ConfirmationPopupWidth = 420.0f;
     private const float ConfirmationButtonWidth = 96.0f;
 
@@ -24,17 +24,17 @@ internal sealed class ConfigurationTransferPanel(SystemConfiguration config)
 
     public void Draw()
     {
-        if (ImGui.Button("Export to clipboard"))
+        if (ImGui.Button("匯出至剪貼簿"))
         {
             SetMessage(ConfigPorter.TryExportConfigToClipboard(config, out var message), message);
         }
 
         ImGui.SameLine();
-        if (ImGui.Button("Hold Shift to import"))
+        if (ImGui.Button("按住 Shift 匯入"))
         {
             if (!Service.KeyState[VirtualKey.SHIFT])
             {
-                SetMessage(false, "Hold Shift while clicking import.");
+                SetMessage(false, "請按住 Shift 再點擊匯入。");
             }
             else
             {
@@ -43,19 +43,19 @@ internal sealed class ConfigurationTransferPanel(SystemConfiguration config)
         }
 
         ImGui.SameLine();
-        if (ImGui.Button("Reset to defaults"))
+        if (ImGui.Button("重設為預設值"))
         {
             OpenConfirmation(ConfirmationAction.Reset);
         }
 
         ImGui.Spacing();
-        if (ImGui.Button("Restore latest backup"))
+        if (ImGui.Button("還原最新備份"))
         {
             OpenConfirmation(ConfirmationAction.RestoreLatestBackup);
         }
 
         ImGui.SameLine();
-        if (ImGui.Button("Open backup folder"))
+        if (ImGui.Button("開啟備份資料夾"))
         {
             SetMessage(TryOpenBackupFolder(out var message), message);
         }
@@ -114,7 +114,7 @@ internal sealed class ConfigurationTransferPanel(SystemConfiguration config)
         }
 
         ImGui.SameLine();
-        if (ImGui.Button("Cancel", buttonSize))
+        if (ImGui.Button("取消", buttonSize))
         {
             ImGui.CloseCurrentPopup();
             _pendingConfirmation = ConfirmationAction.None;
@@ -124,17 +124,17 @@ internal sealed class ConfigurationTransferPanel(SystemConfiguration config)
     private string GetConfirmLabel()
         => _pendingConfirmation switch
         {
-            ConfirmationAction.Reset => "Reset",
-            ConfirmationAction.RestoreLatestBackup => "Restore",
-            _ => "Import",
+            ConfirmationAction.Reset => "重設",
+            ConfirmationAction.RestoreLatestBackup => "還原",
+            _ => "匯入",
         };
 
     private string GetConfirmationText()
         => _pendingConfirmation switch
         {
-            ConfirmationAction.Import => "Replace current MouseLock settings with the config from your clipboard?",
-            ConfirmationAction.Reset => "Reset all MouseLock settings to defaults?",
-            ConfirmationAction.RestoreLatestBackup => "Replace current MouseLock settings with the latest automatic backup?",
+            ConfirmationAction.Import => "要以剪貼簿中的設定取代目前的 MouseLock 設定嗎？",
+            ConfirmationAction.Reset => "要將所有 MouseLock 設定重設為預設值嗎？",
+            ConfirmationAction.RestoreLatestBackup => "要以最新的自動備份取代目前的 MouseLock 設定嗎？",
             _ => string.Empty,
         };
 
@@ -163,7 +163,7 @@ internal sealed class ConfigurationTransferPanel(SystemConfiguration config)
             var backupDirectory = ConfigBackup.GetBackupDirectory(Service.PluginInterface);
             if (backupDirectory is null)
             {
-                message = "Backup folder could not be resolved.";
+                message = "無法取得備份資料夾位置。";
                 return false;
             }
 
@@ -178,12 +178,12 @@ internal sealed class ConfigurationTransferPanel(SystemConfiguration config)
                 UseShellExecute = true,
             });
 
-            message = "Backup folder opened.";
+            message = "已開啟備份資料夾。";
             return true;
         }
         catch (Exception exception)
         {
-            message = "Backup folder could not be opened.";
+            message = "無法開啟備份資料夾。";
             Service.Logger.Error(exception, message);
             return false;
         }

@@ -18,56 +18,56 @@ internal sealed class GeneralTab(
     private static readonly ComboOption<ReleaseModifierKey>[] ReleaseModifierOptions =
     [
         new(ReleaseModifierKey.Alt, "Alt"),
-        new(ReleaseModifierKey.Control, "Control"),
+        new(ReleaseModifierKey.Control, "Ctrl"),
         new(ReleaseModifierKey.Shift, "Shift"),
-        new(ReleaseModifierKey.None, "None"),
+        new(ReleaseModifierKey.None, "無"),
     ];
 
     private static readonly string[] ReleaseModifierLabels = CreateLabels(ReleaseModifierOptions);
 
     private static readonly ComboOption<ReleaseModifierTapBehavior>[] ReleaseModifierTapBehaviorOptions =
     [
-        new(ReleaseModifierTapBehavior.None, "Do nothing"),
-        new(ReleaseModifierTapBehavior.UntilWorldClick, "Release until world click or next tap"),
-        new(ReleaseModifierTapBehavior.UntilNextTap, "Release until next tap"),
+        new(ReleaseModifierTapBehavior.None, "不執行任何動作"),
+        new(ReleaseModifierTapBehavior.UntilWorldClick, "釋放至點擊遊戲世界或再次輕按"),
+        new(ReleaseModifierTapBehavior.UntilNextTap, "釋放至再次輕按"),
     ];
 
     private static readonly string[] ReleaseModifierTapBehaviorLabels = CreateLabels(ReleaseModifierTapBehaviorOptions);
 
     public void Draw()
     {
-        using var tab = ImRaii.TabItem("General");
+        using var tab = ImRaii.TabItem("一般");
         if (!tab)
         {
             return;
         }
 
         var enabled = config.General.Enabled;
-        if (ImGui.Checkbox("Enabled", ref enabled))
+        if (ImGui.Checkbox("啟用", ref enabled))
         {
             MouseLockStateController.SetEnabled(enabled);
         }
 
         var releaseModifierIndex = FindOptionIndex(ReleaseModifierOptions, config.General.ReleaseModifier);
-        if (ImGui.Combo("Temporary release modifier", ref releaseModifierIndex, ReleaseModifierLabels, ReleaseModifierLabels.Length))
+        if (ImGui.Combo("暫時釋放游標的修飾鍵", ref releaseModifierIndex, ReleaseModifierLabels, ReleaseModifierLabels.Length))
         {
             config.General.ReleaseModifier = ReleaseModifierOptions[releaseModifierIndex].Value;
             save();
         }
 
         var restoreCursorPositionOnRelease = config.General.RestoreCursorPositionOnRelease;
-        if (ImGui.Checkbox("Return cursor to previous position when released", ref restoreCursorPositionOnRelease))
+        if (ImGui.Checkbox("釋放時將游標移回先前位置", ref restoreCursorPositionOnRelease))
         {
             config.General.RestoreCursorPositionOnRelease = restoreCursorPositionOnRelease;
             save();
         }
-        ConfigWindow.DrawTooltip("Disable this to leave the cursor centered when MouseLock pauses or releases.");
+        ConfigWindow.DrawTooltip("停用後，MouseLock 暫停或釋放游標時，游標會留在畫面中央。");
 
         var releaseModifierTapBehaviorIndex = FindOptionIndex(
             ReleaseModifierTapBehaviorOptions,
             config.General.ReleaseModifierTapBehavior);
         if (ImGui.Combo(
-                "Tap release modifier",
+                "輕按修飾鍵時",
                 ref releaseModifierTapBehaviorIndex,
                 ReleaseModifierTapBehaviorLabels,
                 ReleaseModifierTapBehaviorLabels.Length))
@@ -77,13 +77,13 @@ internal sealed class GeneralTab(
         }
         ConfigWindow.DrawTooltip(GetReleaseModifierTapBehaviorTooltip());
 
-        ConfigWindow.DrawSection("Toggle keybind");
+        ConfigWindow.DrawSection("切換快捷鍵");
         toggleKeybindEditor.Draw(config.ToggleKeybind);
 
-        ConfigWindow.DrawSection("Server Info Bar");
+        ConfigWindow.DrawSection("伺服器資訊列");
         dtrSettingsEditor.Draw(config.Dtr);
 
-        ConfigWindow.DrawSection("Configuration");
+        ConfigWindow.DrawSection("設定管理");
         configurationTransferPanel.Draw();
     }
 
@@ -93,23 +93,23 @@ internal sealed class GeneralTab(
     {
         if (config.General.ReleaseModifier == ReleaseModifierKey.None)
         {
-            return "No temporary release modifier is configured. Choose Alt, Control, or Shift to use tap release.";
+            return "尚未設定暫時釋放游標的修飾鍵。請選擇 Alt、Ctrl 或 Shift，才能使用輕按釋放功能。";
         }
 
-        var modifier = config.General.ReleaseModifier;
+        var modifier = GetReleaseModifierLabel(config.General.ReleaseModifier);
         return config.General.ReleaseModifierTapBehavior switch
         {
             ReleaseModifierTapBehavior.UntilWorldClick =>
-                $"Hold {modifier} to temporarily release the cursor.\n\n" +
-                $"Selected mode: release until world click or next tap. Tap {modifier} to keep the cursor free until you tap {modifier} again or press LMB/RMB over the game world.\n\n" +
-                "Clicking native game or Dalamud UI should not relock it.",
+                $"按住 {modifier} 可暫時釋放游標。\n\n" +
+                $"目前模式：釋放至點擊遊戲世界或再次輕按。輕按 {modifier} 後，游標會保持自由，直到再次輕按 {modifier}，或在遊戲世界中按下滑鼠左鍵／右鍵。\n\n" +
+                "點擊遊戲原生介面或 Dalamud 介面不會重新鎖定游標。",
             ReleaseModifierTapBehavior.UntilNextTap =>
-                $"Hold {modifier} to temporarily release the cursor.\n\n" +
-                $"Selected mode: release until next tap. Tap {modifier} to toggle cursor release. MouseLock relocks only when you tap {modifier} again.\n\n" +
-                "World clicks and native LMB + RMB movement will not relock it.",
+                $"按住 {modifier} 可暫時釋放游標。\n\n" +
+                $"目前模式：釋放至再次輕按。輕按 {modifier} 可切換游標釋放狀態；只有再次輕按 {modifier} 才會讓 MouseLock 重新鎖定。\n\n" +
+                "點擊遊戲世界及原生的滑鼠左右鍵移動都不會重新鎖定游標。",
             _ =>
-                $"Hold {modifier} to temporarily release the cursor.\n\n" +
-                $"Selected mode: do nothing. Tapping {modifier} has no lasting release behavior.",
+                $"按住 {modifier} 可暫時釋放游標。\n\n" +
+                $"目前模式：不執行任何動作。輕按 {modifier} 不會持續釋放游標。",
         };
     }
 
@@ -123,6 +123,15 @@ internal sealed class GeneralTab(
 
         return labels;
     }
+
+    private static string GetReleaseModifierLabel(ReleaseModifierKey modifier)
+        => modifier switch
+        {
+            ReleaseModifierKey.Alt => "Alt",
+            ReleaseModifierKey.Control => "Ctrl",
+            ReleaseModifierKey.Shift => "Shift",
+            _ => "無",
+        };
 
     private static int FindOptionIndex<T>(IReadOnlyList<ComboOption<T>> options, T value)
     {

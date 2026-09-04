@@ -18,16 +18,16 @@ internal sealed class NativeAddonExceptionEditor(Action save)
             : string.Empty;
         var canUseExceptions = conditions.DisableWhenNativeAddonFocused || conditions.DisableWhenNativeAddonHovered;
 
-        ConfigWindow.DrawSection("Native window exceptions");
+        ConfigWindow.DrawSection("遊戲原生視窗例外");
         using (ImRaii.Disabled(!canUseExceptions))
         {
-            ImGui.TextDisabled("Allow specific game windows to keep MouseLock active.");
-            ImGui.TextUnformatted($"Current game window: {ConfigWindow.DisplayAddonName(currentAddonName)}");
+            ImGui.TextDisabled("允許指定的遊戲視窗在開啟時維持 MouseLock。");
+            ImGui.TextUnformatted($"目前的遊戲視窗：{ConfigWindow.DisplayAddonName(currentAddonName)}");
 
             if (!string.IsNullOrEmpty(currentAddonName))
             {
                 ImGui.SameLine();
-                if (ImGui.SmallButton("Allow this window"))
+                if (ImGui.SmallButton("允許此視窗"))
                 {
                     AddAllowedAddonName(conditions, currentAddonName);
                 }
@@ -38,7 +38,7 @@ internal sealed class NativeAddonExceptionEditor(Action save)
 
         if (!canUseExceptions)
         {
-            ImGui.TextDisabled("Enable a native-window pause option above to use exceptions.");
+            ImGui.TextDisabled("請先啟用上方的遊戲原生視窗暫停選項，才能使用例外清單。");
         }
     }
 
@@ -73,10 +73,10 @@ internal sealed class NativeAddonExceptionEditor(Action save)
             .OrderBy(addonName => addonName, System.StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        ImGui.TextUnformatted("Allowed windows");
+        ImGui.TextUnformatted("允許的視窗");
         if (addonNames.Count == 0)
         {
-            ImGui.TextDisabled("None");
+            ImGui.TextDisabled("無");
             return;
         }
 
@@ -85,7 +85,7 @@ internal sealed class NativeAddonExceptionEditor(Action save)
             ImGui.BulletText(addonName);
             ImGui.SameLine();
 
-            if (ImGui.SmallButton($"Remove##AllowedNativeAddon{addonName}"))
+            if (ImGui.SmallButton($"移除##AllowedNativeAddon{addonName}"))
             {
                 RemoveAllowedAddonName(conditions, addonName);
                 return;

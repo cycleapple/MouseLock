@@ -24,7 +24,7 @@ internal sealed class HotbarSlotPicker(Action save)
     public void Draw(MouseButtonGameInputBinding binding)
     {
         DrawWrappedNumberInput(
-            "Hotbar",
+            "快捷列",
             binding.Hotbar,
             1,
             10,
@@ -32,7 +32,7 @@ internal sealed class HotbarSlotPicker(Action save)
             () => DrawHighlightButton(binding));
 
         DrawWrappedNumberInput(
-            "Slot",
+            "欄位",
             binding.Slot,
             1,
             12,
@@ -99,7 +99,7 @@ internal sealed class HotbarSlotPicker(Action save)
 
     private void DrawHighlightButton(MouseButtonGameInputBinding binding)
     {
-        if (ImGui.Button("Highlight"))
+        if (ImGui.Button("醒目提示"))
         {
             SetPulseStatus(
                 HotbarSlotInterop.TryPulseVisibleSlot(binding.Hotbar, binding.Slot),
@@ -109,7 +109,7 @@ internal sealed class HotbarSlotPicker(Action save)
         if (ImGui.IsItemHovered())
         {
             PulseSlotOnHover(binding.Hotbar, binding.Slot);
-            ConfigWindow.DrawTooltip("Pulse the selected slot on your visible in-game hotbar.");
+            ConfigWindow.DrawTooltip("讓目前可見的遊戲快捷列閃爍所選欄位。");
         }
     }
 
@@ -213,7 +213,7 @@ internal sealed class HotbarSlotPicker(Action save)
             return;
         }
 
-        _status = $"Hotbar {hotbar} is not currently visible.";
+        _status = $"快捷列 {hotbar} 目前不可見。";
         _statusTimer.Restart();
     }
 
@@ -244,7 +244,7 @@ internal sealed class HotbarSlotPicker(Action save)
     }
 
     private static float GetControlLabelWidth()
-        => MathF.Max(ImGui.CalcTextSize("Hotbar").X, ImGui.CalcTextSize("Slot").X);
+        => MathF.Max(ImGui.CalcTextSize("快捷列").X, ImGui.CalcTextSize("欄位").X);
 
     private static Vector4 GetSelectionColor()
     {
@@ -304,10 +304,10 @@ internal sealed class HotbarSlotPicker(Action save)
         {
             var displayName = hotbarSlot.PlainTextDisplayName;
             return string.IsNullOrWhiteSpace(displayName)
-                ? $"Hotbar {hotbar}, slot {slot}"
-                : $"Hotbar {hotbar}, slot {slot}: {displayName}";
+                ? $"快捷列 {hotbar}，欄位 {slot}"
+                : $"快捷列 {hotbar}，欄位 {slot}：{displayName}";
         }
 
-        return $"Hotbar {hotbar}, slot {slot}: empty";
+        return $"快捷列 {hotbar}，欄位 {slot}：空白";
     }
 }

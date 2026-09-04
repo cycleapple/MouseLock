@@ -17,24 +17,24 @@ internal sealed class FirstRunWindow : Window
     private static readonly ComboOption<ReleaseModifierKey>[] ReleaseModifierOptions =
     [
         new(ReleaseModifierKey.Alt, "Alt"),
-        new(ReleaseModifierKey.Control, "Control"),
+        new(ReleaseModifierKey.Control, "Ctrl"),
         new(ReleaseModifierKey.Shift, "Shift"),
-        new(ReleaseModifierKey.None, "None"),
+        new(ReleaseModifierKey.None, "無"),
     ];
 
     private static readonly string[] ReleaseModifierLabels = CreateLabels(ReleaseModifierOptions);
 
     private static readonly ComboOption<ReleaseModifierTapBehavior>[] ReleaseModifierTapBehaviorOptions =
     [
-        new(ReleaseModifierTapBehavior.None, "Do nothing"),
-        new(ReleaseModifierTapBehavior.UntilWorldClick, "Release until world click or next tap"),
-        new(ReleaseModifierTapBehavior.UntilNextTap, "Release until next tap"),
+        new(ReleaseModifierTapBehavior.None, "不執行任何動作"),
+        new(ReleaseModifierTapBehavior.UntilWorldClick, "釋放至點擊遊戲世界或再次輕按"),
+        new(ReleaseModifierTapBehavior.UntilNextTap, "釋放至再次輕按"),
     ];
 
     private static readonly string[] ReleaseModifierTapBehaviorLabels = CreateLabels(ReleaseModifierTapBehaviorOptions);
 
     public FirstRunWindow(SystemConfiguration config)
-        : base("MouseLock Quick Start###MouseLockFirstRun")
+        : base("MouseLock 快速入門###MouseLockFirstRun")
     {
         _config = config;
         IsOpen = !_config.General.FirstRunIntroCompleted;
@@ -44,13 +44,13 @@ internal sealed class FirstRunWindow : Window
 
     public override void Draw()
     {
-        ImGui.TextWrapped("MouseLock keeps your camera locked until something needs the cursor.");
+        ImGui.TextWrapped("MouseLock 會維持滑鼠視角，直到有操作需要使用游標。");
         ImGui.Spacing();
 
-        ImGui.TextWrapped("Important notes:");
-        ImGui.BulletText("Camera active: Locks look direction to mouse movement.");
-        ImGui.BulletText("Cursor position: Recenters to the middle of the screen while locking.");
-        ImGui.BulletText("Window placement: Avoid placing plugin windows directly in the center.");
+        ImGui.TextWrapped("重要事項：");
+        ImGui.BulletText("視角啟用時：觀看方向會跟隨滑鼠移動。");
+        ImGui.BulletText("游標位置：鎖定期間會移回畫面中央。");
+        ImGui.BulletText("視窗位置：請避免將插件視窗直接放在畫面中央。");
 
         DrawQuickSettings();
 
@@ -58,13 +58,13 @@ internal sealed class FirstRunWindow : Window
         ImGui.TextWrapped(GetReleaseModifierHelpText());
 
         ImGui.Spacing();
-        if (ImGui.Button("Got it"))
+        if (ImGui.Button("知道了"))
         {
             CompleteIntro();
         }
 
         ImGui.SameLine();
-        if (ImGui.Button("Open full settings"))
+        if (ImGui.Button("開啟完整設定"))
         {
             PluginState.ConfigWindow.IsOpen = true;
             CompleteIntro();
@@ -79,13 +79,13 @@ internal sealed class FirstRunWindow : Window
     private void DrawQuickSettings()
     {
         var enabled = _config.General.Enabled;
-        if (ImGui.Checkbox("Enable MouseLock", ref enabled))
+        if (ImGui.Checkbox("啟用 MouseLock", ref enabled))
         {
             MouseLockStateController.SetEnabled(enabled);
         }
 
         var releaseModifierIndex = FindOptionIndex(ReleaseModifierOptions, _config.General.ReleaseModifier);
-        if (ImGui.Combo("Temporary release modifier", ref releaseModifierIndex, ReleaseModifierLabels, ReleaseModifierLabels.Length))
+        if (ImGui.Combo("暫時釋放游標的修飾鍵", ref releaseModifierIndex, ReleaseModifierLabels, ReleaseModifierLabels.Length))
         {
             _config.General.ReleaseModifier = ReleaseModifierOptions[releaseModifierIndex].Value;
             Save();
@@ -95,7 +95,7 @@ internal sealed class FirstRunWindow : Window
             ReleaseModifierTapBehaviorOptions,
             _config.General.ReleaseModifierTapBehavior);
         if (ImGui.Combo(
-                "Tap release modifier",
+                "輕按修飾鍵時",
                 ref releaseModifierTapBehaviorIndex,
                 ReleaseModifierTapBehaviorLabels,
                 ReleaseModifierTapBehaviorLabels.Length))
@@ -108,21 +108,21 @@ internal sealed class FirstRunWindow : Window
         var conditions = _config.Activation.Conditions;
 
         var disableWhileTextInputActive = conditions.DisableWhileTextInputActive;
-        if (ImGui.Checkbox("Pause while chat/text input is active", ref disableWhileTextInputActive))
+        if (ImGui.Checkbox("聊天／文字輸入期間暫停", ref disableWhileTextInputActive))
         {
             conditions.DisableWhileTextInputActive = disableWhileTextInputActive;
             Save();
         }
 
         var disableWhenDalamudWindowFocused = conditions.DisableWhenDalamudWindowFocused;
-        if (ImGui.Checkbox("Pause while Dalamud/ImGui windows are focused", ref disableWhenDalamudWindowFocused))
+        if (ImGui.Checkbox("焦點位於 Dalamud／ImGui 視窗時暫停", ref disableWhenDalamudWindowFocused))
         {
             conditions.DisableWhenDalamudWindowFocused = disableWhenDalamudWindowFocused;
             Save();
         }
 
         var disableWhenNativeAddonFocused = conditions.DisableWhenNativeAddonFocused;
-        if (ImGui.Checkbox("Pause while native game windows are focused", ref disableWhenNativeAddonFocused))
+        if (ImGui.Checkbox("焦點位於遊戲原生視窗時暫停", ref disableWhenNativeAddonFocused))
         {
             conditions.DisableWhenNativeAddonFocused = disableWhenNativeAddonFocused;
             Save();
@@ -133,17 +133,17 @@ internal sealed class FirstRunWindow : Window
     {
         if (_config.General.ReleaseModifier == ReleaseModifierKey.None)
         {
-            return "No temporary release modifier is configured. You can add one later in General settings.";
+            return "尚未設定暫時釋放游標的修飾鍵。稍後可在「一般」設定中新增。";
         }
 
-        var modifier = _config.General.ReleaseModifier;
+        var modifier = GetReleaseModifierLabel(_config.General.ReleaseModifier);
         return _config.General.ReleaseModifierTapBehavior switch
         {
             ReleaseModifierTapBehavior.UntilWorldClick =>
-                $"Hold {modifier} to temporarily release the cursor. Tap {modifier} to keep the cursor free until you tap {modifier} again or press LMB/RMB over the game world.",
+                $"按住 {modifier} 可暫時釋放游標。輕按 {modifier} 後，游標會保持自由，直到再次輕按 {modifier}，或在遊戲世界中按下滑鼠左鍵／右鍵。",
             ReleaseModifierTapBehavior.UntilNextTap =>
-                $"Hold {modifier} to temporarily release the cursor. Tap {modifier} to toggle cursor release; MouseLock relocks only when you tap {modifier} again.",
-            _ => $"Hold {modifier} to temporarily release the cursor.",
+                $"按住 {modifier} 可暫時釋放游標。輕按 {modifier} 可切換游標釋放狀態；只有再次輕按 {modifier} 才會讓 MouseLock 重新鎖定。",
+            _ => $"按住 {modifier} 可暫時釋放游標。",
         };
     }
 
@@ -159,6 +159,15 @@ internal sealed class FirstRunWindow : Window
         IsOpen = false;
         Save();
     }
+
+    private static string GetReleaseModifierLabel(ReleaseModifierKey modifier)
+        => modifier switch
+        {
+            ReleaseModifierKey.Alt => "Alt",
+            ReleaseModifierKey.Control => "Ctrl",
+            ReleaseModifierKey.Shift => "Shift",
+            _ => "無",
+        };
 
     private void Save()
     {

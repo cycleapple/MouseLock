@@ -43,7 +43,7 @@ internal sealed class ToggleKeybindListener : IDisposable
             if (settings.ShowChatFeedback)
             {
                 Service.ChatGui.Print(
-                    PluginState.Config.General.Enabled ? "MouseLock enabled." : "MouseLock disabled.",
+                    PluginState.Config.General.Enabled ? "MouseLock 已啟用。" : "MouseLock 已停用。",
                     "MouseLock");
             }
         }

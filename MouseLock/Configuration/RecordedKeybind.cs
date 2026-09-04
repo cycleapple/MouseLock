@@ -41,7 +41,7 @@ public sealed class RecordedKeybind
     public override string ToString()
     {
         return IsEmpty
-            ? "None"
+            ? "無"
             : string.Join(" + ", Modifiers.Distinct().OrderByModifier().Append(Key).Select(key => key.GetDisplayName()));
     }
 }

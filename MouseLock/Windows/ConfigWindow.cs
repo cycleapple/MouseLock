@@ -29,7 +29,7 @@ internal sealed partial class ConfigWindow : Window
     private readonly MouseActionsTab _mouseActionsTab;
     private readonly CompatibilityTab _compatibilityTab;
 
-    public ConfigWindow(SystemConfiguration config) : base("MouseLock Config")
+    public ConfigWindow(SystemConfiguration config) : base("MouseLock 設定")
     {
         _config = config;
         _configurationTransferPanel = new ConfigurationTransferPanel(_config);

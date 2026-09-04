@@ -10,9 +10,9 @@ internal sealed class DtrSettingsEditor(Action save)
 {
     private static readonly ComboOption<DtrTextMode>[] TextModeOptions =
     [
-        new(DtrTextMode.Simple, "Simple: MouseLock: Paused"),
-        new(DtrTextMode.Detailed, "Detailed: MouseLock: Paused: Reason"),
-        new(DtrTextMode.Compact, "Compact: ML: Paused"),
+        new(DtrTextMode.Simple, "簡潔：MouseLock：已暫停"),
+        new(DtrTextMode.Detailed, "詳細：MouseLock：已暫停：原因"),
+        new(DtrTextMode.Compact, "精簡：ML：暫停"),
     ];
 
     private static readonly string[] TextModeLabels = CreateLabels(TextModeOptions);
@@ -20,7 +20,7 @@ internal sealed class DtrSettingsEditor(Action save)
     public void Draw(DtrSettings settings)
     {
         var enabled = settings.Enabled;
-        if (ImGui.Checkbox("Show in Server Info Bar", ref enabled))
+        if (ImGui.Checkbox("顯示於伺服器資訊列", ref enabled))
         {
             settings.Enabled = enabled;
             save();
@@ -30,14 +30,14 @@ internal sealed class DtrSettingsEditor(Action save)
         {
             ConfigWindow.DrawNestIndicator(1);
             var textModeIndex = FindOptionIndex(TextModeOptions, settings.TextMode);
-            if (ImGui.Combo("Status text", ref textModeIndex, TextModeLabels, TextModeLabels.Length))
+            if (ImGui.Combo("狀態文字", ref textModeIndex, TextModeLabels, TextModeLabels.Length))
             {
                 settings.TextMode = TextModeOptions[textModeIndex].Value;
                 save();
             }
         }
 
-        ImGui.TextWrapped("Left-click the Server Info Bar entry to toggle MouseLock on/off. Right-click it to toggle this config window.");
+        ImGui.TextWrapped("在伺服器資訊列項目上按左鍵可開關 MouseLock；按右鍵可開關此設定視窗。");
     }
 
     private readonly record struct ComboOption<T>(T Value, string Label);

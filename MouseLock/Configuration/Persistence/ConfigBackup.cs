@@ -91,7 +91,7 @@ public static class ConfigBackup
         var directory = GetBackupDirectory(Service.PluginInterface);
         if (directory is null || !directory.Exists)
         {
-            message = "No backup folder was found.";
+            message = "找不到備份資料夾。";
             return false;
         }
 
@@ -102,7 +102,7 @@ public static class ConfigBackup
 
         if (backupFile is null)
         {
-            message = "No MouseLock backup was found.";
+            message = "找不到 MouseLock 備份。";
             return false;
         }
 
@@ -112,14 +112,14 @@ public static class ConfigBackup
             entry.FullName.Equals(configEntryName, StringComparison.OrdinalIgnoreCase));
         if (entry is null)
         {
-            message = $"Backup did not contain {configEntryName}.";
+            message = $"備份中不含 {configEntryName}。";
             return false;
         }
 
         using var stream = entry.Open();
         using var reader = new StreamReader(stream, Encoding.UTF8);
         configJson = reader.ReadToEnd();
-        message = $"Loaded backup {backupFile.Name}.";
+        message = $"已載入備份 {backupFile.Name}。";
         return true;
     }
 

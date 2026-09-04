@@ -19,36 +19,36 @@ internal sealed class MouseActionsTab(
 
     private static readonly ComboOption<MouseButtonBindingKind>[] BindingKindOptions =
     [
-        new(MouseButtonBindingKind.None, "None"),
-        new(MouseButtonBindingKind.GameInput, "Game input"),
-        new(MouseButtonBindingKind.HotbarSlot, "Hotbar slot"),
-        new(MouseButtonBindingKind.TemporaryRelease, "Temporary release"),
-        new(MouseButtonBindingKind.ToggleMouseLock, "Toggle MouseLock"),
-        new(MouseButtonBindingKind.OpenConfig, "Open config"),
+        new(MouseButtonBindingKind.None, "無"),
+        new(MouseButtonBindingKind.GameInput, "遊戲輸入"),
+        new(MouseButtonBindingKind.HotbarSlot, "快捷列欄位"),
+        new(MouseButtonBindingKind.TemporaryRelease, "暫時釋放游標"),
+        new(MouseButtonBindingKind.ToggleMouseLock, "切換 MouseLock"),
+        new(MouseButtonBindingKind.OpenConfig, "開啟設定"),
     ];
 
     private static readonly string[] BindingKindLabels = CreateLabels(BindingKindOptions);
 
     private static readonly ComboOption<CuratedGameInput>[] GameInputOptions =
     [
-        new(CuratedGameInput.TabTargetNext, "Tab target next"),
-        new(CuratedGameInput.TabTargetPrevious, "Tab target previous"),
-        new(CuratedGameInput.TargetNearestEnemy, "Target nearest enemy"),
-        new(CuratedGameInput.MoveForward, "Move forward"),
-        new(CuratedGameInput.MoveBack, "Move back"),
-        new(CuratedGameInput.MoveLeft, "Move left"),
-        new(CuratedGameInput.MoveRight, "Move right"),
-        new(CuratedGameInput.StrafeLeft, "Strafe left"),
-        new(CuratedGameInput.StrafeRight, "Strafe right"),
-        new(CuratedGameInput.Jump, "Jump"),
-        new(CuratedGameInput.Autorun, "Autorun"),
+        new(CuratedGameInput.TabTargetNext, "切換至下一個目標"),
+        new(CuratedGameInput.TabTargetPrevious, "切換至上一個目標"),
+        new(CuratedGameInput.TargetNearestEnemy, "選取最近的敵人"),
+        new(CuratedGameInput.MoveForward, "向前移動"),
+        new(CuratedGameInput.MoveBack, "向後移動"),
+        new(CuratedGameInput.MoveLeft, "向左移動"),
+        new(CuratedGameInput.MoveRight, "向右移動"),
+        new(CuratedGameInput.StrafeLeft, "向左平移"),
+        new(CuratedGameInput.StrafeRight, "向右平移"),
+        new(CuratedGameInput.Jump, "跳躍"),
+        new(CuratedGameInput.Autorun, "自動奔跑"),
     ];
 
     private static readonly string[] GameInputLabels = CreateLabels(GameInputOptions);
 
     public void Draw()
     {
-        using var tab = ImRaii.TabItem("Mouse Actions");
+        using var tab = ImRaii.TabItem("滑鼠動作");
         if (!tab)
         {
             return;
@@ -56,27 +56,28 @@ internal sealed class MouseActionsTab(
 
         var actions = config.MouseActions;
 
-        ConfigWindow.DrawSection("Native mouse movement");
+        ConfigWindow.DrawSection("原生滑鼠移動");
 
         var classicMouseMovementEnabled = actions.ClassicMouseMovementEnabled;
-        if (ImGui.Checkbox("Use LMB + RMB to move forward", ref classicMouseMovementEnabled))
+        if (ImGui.Checkbox("同時按下滑鼠左鍵與右鍵以向前移動", ref classicMouseMovementEnabled))
         {
             actions.ClassicMouseMovementEnabled = classicMouseMovementEnabled;
             save();
         }
         ConfigWindow.DrawTooltip(
-            "Restores FFXIV's normal two-button mouse movement while MouseLock is active.\n" +
-            "This is unrelated to the Standard and Legacy movement settings.\n" +
-            "All configured LMB/RMB actions are disabled while enabled.");
+            "在 MouseLock 啟用時恢復 FFXIV 原本的雙鍵滑鼠移動。\n" +
+            "此功能與標準／傳統移動模式設定無關。\n" +
+            "啟用後，所有設定的滑鼠左鍵／右鍵動作都會停用。");
 
         if (actions.ClassicMouseMovementEnabled)
         {
-            ImGui.TextDisabled("Mouse actions are disabled while native LMB + RMB movement is enabled.");
+            ImGui.TextDisabled("啟用原生滑鼠左右鍵移動時，滑鼠動作將停用。");
         }
 
         ConfigWindow.DrawDisabled(actions.ClassicMouseMovementEnabled, () =>
         {
             DrawMouseButtonActionGroup(
+                "滑鼠左鍵",
                 "LMB",
                 actions.LeftButton,
                 actions.LeftAltButton,
@@ -84,6 +85,7 @@ internal sealed class MouseActionsTab(
                 actions.LeftShiftButton);
 
             DrawMouseButtonActionGroup(
+                "滑鼠右鍵",
                 "RMB",
                 actions.RightButton,
                 actions.RightAltButton,
@@ -94,6 +96,7 @@ internal sealed class MouseActionsTab(
 
     private void DrawMouseButtonActionGroup(
         string label,
+        string id,
         MouseButtonGameInputBinding defaultBinding,
         MouseButtonGameInputBinding altBinding,
         MouseButtonGameInputBinding controlBinding,
@@ -102,7 +105,7 @@ internal sealed class MouseActionsTab(
         ConfigWindow.DrawSection(label);
 
         using var table = ImRaii.Table(
-            $"##{label}ActionLayers",
+            $"##{id}ActionLayers",
             2,
             ImGuiTableFlags.NoPadOuterX | ImGuiTableFlags.SizingStretchProp);
         if (!table)
@@ -113,10 +116,10 @@ internal sealed class MouseActionsTab(
         ImGui.TableSetupColumn("##Modifier", ImGuiTableColumnFlags.WidthFixed, ImGui.GetFrameHeight() * LayerColumnWidthInFrames);
         ImGui.TableSetupColumn("##Binding", ImGuiTableColumnFlags.WidthStretch);
 
-        DrawMouseActionLayerRow($"{label}Default", "Default", ReleaseModifierKey.None, defaultBinding);
-        DrawMouseActionLayerRow($"{label}Alt", "Alt", ReleaseModifierKey.Alt, altBinding);
-        DrawMouseActionLayerRow($"{label}Control", "Control", ReleaseModifierKey.Control, controlBinding);
-        DrawMouseActionLayerRow($"{label}Shift", "Shift", ReleaseModifierKey.Shift, shiftBinding);
+        DrawMouseActionLayerRow($"{id}Default", "預設", ReleaseModifierKey.None, defaultBinding);
+        DrawMouseActionLayerRow($"{id}Alt", "Alt", ReleaseModifierKey.Alt, altBinding);
+        DrawMouseActionLayerRow($"{id}Control", "Ctrl", ReleaseModifierKey.Control, controlBinding);
+        DrawMouseActionLayerRow($"{id}Shift", "Shift", ReleaseModifierKey.Shift, shiftBinding);
     }
 
     private void DrawMouseActionLayerRow(
@@ -170,7 +173,7 @@ internal sealed class MouseActionsTab(
     {
         ConfigWindow.DrawNestIndicator(1);
         ImGui.AlignTextToFramePadding();
-        ImGui.TextUnformatted("Game input");
+        ImGui.TextUnformatted("遊戲輸入");
         ImGui.SameLine();
 
         var gameInputIndex = FindOptionIndex(GameInputOptions, binding.GameInput);
@@ -193,7 +196,7 @@ internal sealed class MouseActionsTab(
 
         ConfigWindow.DrawNestIndicator(1);
         using var warningColor = ImRaii.PushColor(ImGuiCol.Text, GetWarningTextColor());
-        ImGui.TextWrapped($"{GetReleaseModifierLabel(layerModifier)} is also the temporary release modifier, so this layer pauses MouseLock before the action can run.");
+        ImGui.TextWrapped($"{GetReleaseModifierLabel(layerModifier)} 同時也是暫時釋放游標的修飾鍵，因此此層級會先暫停 MouseLock，無法執行動作。");
     }
 
     private readonly record struct ComboOption<T>(T Value, string Label);
@@ -226,9 +229,9 @@ internal sealed class MouseActionsTab(
         => modifier switch
         {
             ReleaseModifierKey.Alt => "Alt",
-            ReleaseModifierKey.Control => "Control",
+            ReleaseModifierKey.Control => "Ctrl",
             ReleaseModifierKey.Shift => "Shift",
-            _ => "None",
+            _ => "無",
         };
 
     private static float GetControlWidth()

@@ -16,7 +16,7 @@ internal sealed class ToggleKeybindEditor(Action save)
     public void Draw(ToggleKeybindSettings settings)
     {
         var enabled = settings.Enabled;
-        if (ImGui.Checkbox("Enable toggle keybind", ref enabled))
+        if (ImGui.Checkbox("啟用切換快捷鍵", ref enabled))
         {
             settings.Enabled = enabled;
             save();
@@ -34,7 +34,7 @@ internal sealed class ToggleKeybindEditor(Action save)
 
         ConfigWindow.DrawNestIndicator(1);
         var ignoreTextInput = settings.IgnoreWhileTextInputActive;
-        if (ImGui.Checkbox("Ignore while text input is active", ref ignoreTextInput))
+        if (ImGui.Checkbox("文字輸入期間忽略快捷鍵", ref ignoreTextInput))
         {
             settings.IgnoreWhileTextInputActive = ignoreTextInput;
             save();
@@ -42,7 +42,7 @@ internal sealed class ToggleKeybindEditor(Action save)
 
         ConfigWindow.DrawNestIndicator(1);
         var showChatFeedback = settings.ShowChatFeedback;
-        if (ImGui.Checkbox("Show chat feedback when used", ref showChatFeedback))
+        if (ImGui.Checkbox("使用時在聊天欄顯示結果", ref showChatFeedback))
         {
             settings.ShowChatFeedback = showChatFeedback;
             save();
@@ -51,17 +51,17 @@ internal sealed class ToggleKeybindEditor(Action save)
 
     private void DrawRecordedKeybind(ToggleKeybindSettings settings)
     {
-        ImGui.TextUnformatted($"Toggle key: {settings.Keybind}");
+        ImGui.TextUnformatted($"切換按鍵：{settings.Keybind}");
         ImGui.SameLine();
 
-        if (ImGui.Button(_isRecording ? "Recording..." : "Record"))
+        if (ImGui.Button(_isRecording ? "錄製中…" : "錄製"))
         {
             _isRecording = true;
             _skipCaptureFrame = true;
         }
 
         ImGui.SameLine();
-        if (ImGui.Button("Clear"))
+        if (ImGui.Button("清除"))
         {
             settings.SetKeybind(new RecordedKeybind());
             save();
@@ -70,7 +70,7 @@ internal sealed class ToggleKeybindEditor(Action save)
         if (_isRecording)
         {
             ConfigWindow.DrawNestIndicator(2);
-            ImGui.TextDisabled("Press a key combination. Esc cancels.");
+            ImGui.TextDisabled("請按下按鍵組合；按 Esc 取消。");
 
             if (_skipCaptureFrame)
             {
@@ -129,9 +129,9 @@ internal sealed class ToggleKeybindEditor(Action save)
         var preview = string.Join(", ", conflicts.Take(4));
         if (conflicts.Count > 4)
         {
-            preview += $", +{conflicts.Count - 4} more";
+            preview += $"，另有 {conflicts.Count - 4} 個";
         }
 
-        ImGui.TextDisabled($"Conflicts with game keybinds: {preview}");
+        ImGui.TextDisabled($"與遊戲快捷鍵衝突：{preview}");
     }
 }

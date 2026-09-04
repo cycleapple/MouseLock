@@ -8,5 +8,5 @@ internal static class MouseLookStatusIpcFormatter
         => $"{status.Kind}|{status.Reason}|{GetPauseReason(status)}";
 
     public static string GetPauseReason(MouseLookStatus status)
-        => MouseLookStatusFormatter.GetReasonLabel(status.Reason);
+        => MouseLookStatusFormatter.GetInvariantReasonLabel(status.Reason);
 }

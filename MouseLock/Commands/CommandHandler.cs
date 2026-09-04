@@ -12,7 +12,7 @@ namespace MouseLock.Commands;
 internal sealed class CommandHandler : IDisposable
 {
     private const string MainCommand = "/mouselock";
-    private const string HelpDescription = "MouseLock command. Use '/mouselock help' for options.";
+    private const string HelpDescription = "MouseLock 指令。使用「/mouselock help」查看可用選項。";
 
     private readonly Dictionary<string, SubCommand> _subCommands;
 
@@ -20,12 +20,12 @@ internal sealed class CommandHandler : IDisposable
     {
         _subCommands = new Dictionary<string, SubCommand>(StringComparer.OrdinalIgnoreCase)
         {
-            ["help"] = new(_ => PrintHelp(), "Show this help message"),
-            ["off"] = new(_ => SetEnabled(false), "Disable Mouselook"),
-            ["on"] = new(_ => SetEnabled(true), "Enable Mouselook"),
-            ["status"] = new(_ => PrintStatus(), "Show current status"),
-            ["suspend"] = new(HandleSuspend, "Toggle or control command-based suspension", "[on|off|resume|clear|status] [source]"),
-            ["toggle"] = new(_ => ToggleEnabled(), "Toggle Mouselook"),
+            ["help"] = new(_ => PrintHelp(), "顯示此說明訊息"),
+            ["off"] = new(_ => SetEnabled(false), "停用滑鼠視角鎖定"),
+            ["on"] = new(_ => SetEnabled(true), "啟用滑鼠視角鎖定"),
+            ["status"] = new(_ => PrintStatus(), "顯示目前狀態"),
+            ["suspend"] = new(HandleSuspend, "切換或控制指令要求的暫停狀態", "[on|off|resume|clear|status] [source]"),
+            ["toggle"] = new(_ => ToggleEnabled(), "切換滑鼠視角鎖定"),
         };
 
         Service.CommandManager.AddHandler(MainCommand, new CommandInfo(OnCommand)
@@ -59,7 +59,7 @@ internal sealed class CommandHandler : IDisposable
             return;
         }
 
-        PrintChat($"Unknown command: {subCommandName}. Use '{MainCommand} help' for available commands.");
+        PrintChat($"未知指令：{subCommandName}。使用「{MainCommand} help」查看可用指令。");
     }
 
     private static void SetEnabled(bool enabled)
@@ -112,7 +112,7 @@ internal sealed class CommandHandler : IDisposable
                 break;
 
             default:
-                PrintChat($"Unknown suspend action: {action}. Use '{MainCommand} suspend on|off|clear|status [source]'.");
+                PrintChat($"未知的暫停操作：{action}。請使用「{MainCommand} suspend on|off|clear|status [source]」。");
                 break;
         }
     }
@@ -124,8 +124,8 @@ internal sealed class CommandHandler : IDisposable
         SuspensionRegistry.SetSuspended(source, suspended);
         PluginState.MouseLookService?.RefreshCurrentStatus();
         PrintChat(suspended
-            ? $"Suspended by {source}."
-            : $"Released suspension for {source}.");
+            ? $"已由「{MouseLookStatusFormatter.GetSuspensionSourceLabel(source)}」要求暫停。"
+            : $"已解除「{MouseLookStatusFormatter.GetSuspensionSourceLabel(source)}」的暫停要求。");
         PrintSuspensionStatus();
     }
 
@@ -133,20 +133,20 @@ internal sealed class CommandHandler : IDisposable
     {
         var clearedCount = SuspensionRegistry.Clear();
         PluginState.MouseLookService?.RefreshCurrentStatus();
-        PrintChat($"Cleared {clearedCount} suspension source(s).");
+        PrintChat($"已清除 {clearedCount} 個暫停來源。");
         PrintSuspensionStatus();
     }
 
     private static void PrintSuspensionStatus()
     {
         PrintChat(SuspensionRegistry.IsSuspended
-            ? $"Suspended by: {SuspensionRegistry.SourcesSummary}"
-            : "No external suspensions are active.");
+            ? $"暫停來源：{MouseLookStatusFormatter.GetSuspensionSourcesSummary()}"
+            : "目前沒有外部暫停要求。");
     }
 
     private void PrintHelp()
     {
-        var builder = new StringBuilder("MouseLock Commands:\n");
+        var builder = new StringBuilder("MouseLock 指令：\n");
         foreach (var (name, subCommand) in _subCommands.OrderBy(pair => pair.Key))
         {
             builder.Append(MainCommand).Append(' ').Append(name);

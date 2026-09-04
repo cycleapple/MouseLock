@@ -11,11 +11,11 @@ internal sealed class MouseLookStatusCard
         var status = PluginState.MouseLookService?.Status
                      ?? MouseLookStatus.Unavailable(MouseLookPauseReason.HookUnavailable);
 
-        ImGui.TextUnformatted($"Status: {MouseLookStatusFormatter.GetSummary(status)}");
+        ImGui.TextUnformatted($"狀態：{MouseLookStatusFormatter.GetSummary(status)}");
         ImGui.TextDisabled(MouseLookStatusFormatter.GetDetail(status));
         if (SuspensionRegistry.IsSuspended)
         {
-            ImGui.TextDisabled($"External suspensions: {SuspensionRegistry.SourcesSummary}");
+            ImGui.TextDisabled($"外部暫停來源：{MouseLookStatusFormatter.GetSuspensionSourcesSummary()}");
         }
 
         ImGui.Spacing();

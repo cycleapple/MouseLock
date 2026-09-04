@@ -34,7 +34,7 @@ internal static class ConfigSerializer
 
         if (string.IsNullOrWhiteSpace(input))
         {
-            error = "Clipboard is empty.";
+            error = "剪貼簿是空的。";
             return false;
         }
 
@@ -51,7 +51,7 @@ internal static class ConfigSerializer
 
         if (string.IsNullOrEmpty(error))
         {
-            error = "Clipboard data was not valid MouseLock config data.";
+            error = "剪貼簿內容不是有效的 MouseLock 設定資料。";
         }
 
         return false;
@@ -84,13 +84,13 @@ internal static class ConfigSerializer
             var imported = JsonSerializer.Deserialize<SystemConfiguration>(json, Options);
             if (imported is null)
             {
-                error = "Clipboard data did not contain a MouseLock config.";
+                error = "剪貼簿內容未包含 MouseLock 設定。";
                 return false;
             }
 
             if (imported.Version > SystemConfiguration.CurrentVersion)
             {
-                error = $"Config version {imported.Version} is newer than supported version {SystemConfiguration.CurrentVersion}.";
+                error = $"設定版本 {imported.Version} 高於目前支援的版本 {SystemConfiguration.CurrentVersion}。";
                 return false;
             }
 
@@ -100,7 +100,7 @@ internal static class ConfigSerializer
         }
         catch (Exception exception) when (exception is JsonException or NotSupportedException)
         {
-            error = "Clipboard data could not be parsed as MouseLock config JSON.";
+            error = "無法將剪貼簿內容解析為 MouseLock 設定 JSON。";
             return false;
         }
     }

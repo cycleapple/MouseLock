@@ -13,13 +13,13 @@ internal static class ConfigPorter
             var exportString = ConfigSerializer.SerializeConfig(config);
             ImGui.SetClipboardText(exportString);
 
-            message = "Configuration exported to clipboard.";
+            message = "已將設定匯出至剪貼簿。";
             Service.Logger.Information(message);
             return true;
         }
         catch (Exception exception)
         {
-            message = "Configuration export failed.";
+            message = "設定匯出失敗。";
             Service.Logger.Error(exception, message);
             return false;
         }
@@ -39,7 +39,7 @@ internal static class ConfigPorter
         PluginState.MouseLookService?.RefreshCurrentStatus();
         PluginState.DtrStatusService?.Refresh();
 
-        message = "Configuration imported from clipboard.";
+        message = "已從剪貼簿匯入設定。";
         Service.Logger.Information(message);
         return true;
     }
@@ -56,13 +56,13 @@ internal static class ConfigPorter
             PluginState.MouseLookService?.RefreshCurrentStatus();
             PluginState.DtrStatusService?.Refresh();
 
-            message = "Configuration reset to defaults.";
+            message = "已將設定重設為預設值。";
             Service.Logger.Information(message);
             return true;
         }
         catch (Exception exception)
         {
-            message = "Configuration reset failed.";
+            message = "設定重設失敗。";
             Service.Logger.Error(exception, message);
             return false;
         }
@@ -89,13 +89,13 @@ internal static class ConfigPorter
             PluginState.MouseLookService?.RefreshCurrentStatus();
             PluginState.DtrStatusService?.Refresh();
 
-            message = "Latest backup restored.";
+            message = "已還原最新備份。";
             Service.Logger.Information(message);
             return true;
         }
         catch (Exception exception)
         {
-            message = "Backup restore failed.";
+            message = "備份還原失敗。";
             Service.Logger.Error(exception, message);
             return false;
         }

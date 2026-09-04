@@ -58,5 +58,5 @@ internal sealed partial class ConfigWindow
     }
 
     internal static string DisplayAddonName(string addonName)
-        => string.IsNullOrEmpty(addonName) ? "None" : addonName;
+        => string.IsNullOrEmpty(addonName) ? "無" : addonName;
 }

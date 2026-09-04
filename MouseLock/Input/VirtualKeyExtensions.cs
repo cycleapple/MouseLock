@@ -44,10 +44,10 @@ internal static class VirtualKeyExtensions
         VirtualKey.CONTROL => "Ctrl",
         VirtualKey.SHIFT => "Shift",
         VirtualKey.MENU => "Alt",
-        VirtualKey.MBUTTON => "Middle Mouse",
-        VirtualKey.XBUTTON1 => "Mouse 4",
-        VirtualKey.XBUTTON2 => "Mouse 5",
-        VirtualKey.NO_KEY => "None",
+        VirtualKey.MBUTTON => "滑鼠中鍵",
+        VirtualKey.XBUTTON1 => "滑鼠按鍵 4",
+        VirtualKey.XBUTTON2 => "滑鼠按鍵 5",
+        VirtualKey.NO_KEY => "無",
         _ => key.ToString(),
     };
 

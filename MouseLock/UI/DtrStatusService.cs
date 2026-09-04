@@ -64,7 +64,7 @@ internal sealed class DtrStatusService : IDisposable
         _dtrEntry.Text = new SeStringBuilder().AddText(DtrStatusFormatter.GetText(status, settings.TextMode)).Build();
         _dtrEntry.Tooltip = new SeStringBuilder()
             .AddText(MouseLookStatusFormatter.GetDetail(status))
-            .AddText("\nLeft-click to toggle MouseLock. Right-click to toggle config.")
+            .AddText("\n按左鍵可開關 MouseLock；按右鍵可開關設定視窗。")
             .Build();
         _dtrEntry.Shown = true;
     }
