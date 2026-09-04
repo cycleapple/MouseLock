@@ -63,7 +63,7 @@ internal sealed class ConfigurationTransferPanel(SystemConfiguration config)
         if (!string.IsNullOrEmpty(_message))
         {
             ImGui.TextColored(
-                _messageIsError ? ImGuiColors.ErrorForeground : ImGuiColors.SuccessForeground,
+                _messageIsError ? ImGuiColors.DalamudRed : ImGuiColors.HealerGreen,
                 _message);
         }
 

@@ -12,10 +12,19 @@ internal static class MouseButtonSuppression
             return;
         }
 
-        inputData->CursorInputs.Clear(false, buttons);
-        inputData->UIFilteredCursorInputs.Clear(false, buttons);
+        ClearButtons(&inputData->CursorInputs, buttons);
+        ClearButtons(&inputData->UIFilteredCursorInputs, buttons);
 
-        inputData->CurrentMouseDragButtons &= unchecked((byte)~(byte)buttons);
+        var currentMouseDragButtons = (byte*)inputData + 0x9AC;
+        *currentMouseDragButtons &= unchecked((byte)~(byte)buttons);
         inputData->UIFilteredCursorInputsButtonsChanged = true;
+    }
+
+    private static unsafe void ClearButtons(CursorInputData* inputData, MouseButtonFlags buttons)
+    {
+        inputData->MouseButtonHeldFlags &= ~buttons;
+        inputData->MouseButtonPressedFlags &= ~buttons;
+        inputData->MouseButtonReleasedFlags &= ~buttons;
+        inputData->MouseButtonHeldThrottledFlags &= ~buttons;
     }
 }

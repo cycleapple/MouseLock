@@ -235,5 +235,5 @@ internal sealed class MouseActionsTab(
         => MathF.Min(ImGui.GetContentRegionAvail().X, ImGui.GetFrameHeight() * ComboWidthInFrames);
 
     private static Vector4 GetWarningTextColor()
-        => ImGuiColors.WarningForeground;
+        => ImGuiColors.DalamudOrange;
 }

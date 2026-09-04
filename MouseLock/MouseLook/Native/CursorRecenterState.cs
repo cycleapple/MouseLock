@@ -7,6 +7,9 @@ namespace MouseLock.MouseLook.Native;
 
 internal sealed unsafe class CursorRecenterState
 {
+    private const string ScheduleCursorMoveSignature = "89 0D ?? ?? ?? ?? 89 15 ?? ?? ?? ?? C6 05 ?? ?? ?? ?? 01 C3";
+
+    private readonly delegate* unmanaged<int, int, void> _scheduleCursorMove;
     private bool _hasRestorePosition;
     private bool _hasScheduledCursorMoveDelta;
     private bool _clearScheduledCursorMoveDeltaOnCompensation;
@@ -19,13 +22,13 @@ internal sealed unsafe class CursorRecenterState
     {
         try
         {
-            var address = (nint)MouseDevice.MemberFunctionPointers.ScheduleCursorMove;
-            if (address == 0)
+            if (!Service.SigScanner.TryScanText(ScheduleCursorMoveSignature, out var address))
             {
-                Service.Logger.Error("Could not resolve cursor move scheduler.");
+                Service.Logger.Error("Could not resolve cursor move scheduler: signature was not found.");
                 return;
             }
 
+            _scheduleCursorMove = (delegate* unmanaged<int, int, void>)address;
             IsAvailable = true;
             Service.Logger.Information("Resolved cursor move scheduler at 0x{Address:X}.", address);
         }
@@ -93,7 +96,7 @@ internal sealed unsafe class CursorRecenterState
             return;
         }
 
-        MouseDevice.ScheduleCursorMove(centerX, centerY);
+        _scheduleCursorMove(centerX, centerY);
 
         if (!_hasScheduledCursorMoveDelta)
         {
@@ -113,7 +116,7 @@ internal sealed unsafe class CursorRecenterState
 
         if (restoreCursor && _hasRestorePosition && IsAvailable)
         {
-            MouseDevice.ScheduleCursorMove(_restorePositionX, _restorePositionY);
+            _scheduleCursorMove(_restorePositionX, _restorePositionY);
         }
 
         Reset();

@@ -1,4 +1,5 @@
 using Dalamud.IoC;
+using Dalamud.Game;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
@@ -11,6 +12,7 @@ public sealed class Service
     [PluginService] public static IPluginLog Logger { get; private set; } = null!;
 
     [PluginService] public static IGameInteropProvider GameInteropProvider { get; private set; } = null!;
+    [PluginService] public static ISigScanner SigScanner { get; private set; } = null!;
 
     [PluginService] public static ICommandManager CommandManager { get; private set; } = null!;
 

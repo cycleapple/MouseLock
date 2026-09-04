@@ -28,9 +28,13 @@ internal static unsafe class NativeUiState
     private static bool IsAnyUiNodeHovered()
     {
         var stage = AtkStage.Instance();
-        return stage is not null &&
-               stage->AtkInputManager is not null &&
-               stage->AtkInputManager->FocusedNode is not null;
+        if (stage is null || stage->AtkInputManager is null)
+        {
+            return false;
+        }
+
+        var focusedNode = *(AtkResNode**)((byte*)stage->AtkInputManager + 0x1880);
+        return focusedNode is not null;
     }
 
     public static bool TryGetFocusedBlockingAddonName(out string addonName)
@@ -71,8 +75,15 @@ internal static unsafe class NativeUiState
             return false;
         }
 
-        var collision = new AddonCollision();
-        unitManager->GetAddonCollision(&collision, cursorX, cursorY);
+        var collision = new AddonCollisionCompat();
+        var virtualTable = *(nint**)unitManager;
+        var getAddonCollision = (delegate* unmanaged<
+            RaptureAtkUnitManager*,
+            AddonCollisionCompat*,
+            short,
+            short,
+            void>)virtualTable[7];
+        getAddonCollision(unitManager, &collision, cursorX, cursorY);
         if (TryGetBlockingAddonName(collision.UnitBase, out addonName))
         {
             return true;
@@ -100,5 +111,11 @@ internal static unsafe class NativeUiState
 
         addonName = addon->NameString;
         return true;
+    }
+
+    private struct AddonCollisionCompat
+    {
+        public AtkUnitBase* UnitBase;
+        public AtkCollisionNode* CollisionNode;
     }
 }

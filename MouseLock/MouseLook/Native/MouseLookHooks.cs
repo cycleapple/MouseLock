@@ -7,12 +7,15 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 namespace MouseLock.MouseLook.Native;
 
 internal sealed unsafe class MouseLookHooks(
-    AtkModule.Delegates.HandleInput atkModuleHandleInputDetour,
-    Camera.Delegates.GetCameraInputSource cameraInputSourceDetour)
+    AtkModuleHandleInputDelegate atkModuleHandleInputDetour,
+    CameraInputSourceDelegate cameraInputSourceDetour)
     : IDisposable
 {
-    private Hook<AtkModule.Delegates.HandleInput>? _atkModuleHandleInputHook;
-    private Hook<Camera.Delegates.GetCameraInputSource>? _cameraInputSourceHook;
+    private const string AtkModuleHandleInputSignature = "E8 ?? ?? ?? ?? 41 B6 01 40 B5 02";
+    private const string CameraInputSourceSignature = "48 83 EC ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 ?? B8";
+
+    private Hook<AtkModuleHandleInputDelegate>? _atkModuleHandleInputHook;
+    private Hook<CameraInputSourceDelegate>? _cameraInputSourceHook;
 
     public void Enable()
     {
@@ -58,14 +61,13 @@ internal sealed unsafe class MouseLookHooks(
 
     private void EnableAtkModuleHandleInputHook()
     {
-        var address = (nint)AtkModule.MemberFunctionPointers.HandleInput;
-        if (address == 0)
+        if (!Service.SigScanner.TryScanText(AtkModuleHandleInputSignature, out var address))
         {
-            Service.Logger.Error("Could not hook AtkModule.HandleInput: address was not resolved.");
+            Service.Logger.Error("Could not hook AtkModule.HandleInput: signature was not found.");
             return;
         }
 
-        _atkModuleHandleInputHook = Service.GameInteropProvider.HookFromAddress<AtkModule.Delegates.HandleInput>(
+        _atkModuleHandleInputHook = Service.GameInteropProvider.HookFromAddress<AtkModuleHandleInputDelegate>(
             address,
             atkModuleHandleInputDetour);
         _atkModuleHandleInputHook.Enable();
@@ -82,10 +84,9 @@ internal sealed unsafe class MouseLookHooks(
 
     private void EnableCameraInputSourceHook()
     {
-        var address = (nint)Camera.MemberFunctionPointers.GetCameraInputSource;
-        if (address == 0)
+        if (!Service.SigScanner.TryScanText(CameraInputSourceSignature, out var address))
         {
-            Service.Logger.Error("Could not hook Camera.GetCameraInputSource: address was not resolved.");
+            Service.Logger.Error("Could not hook Camera.GetCameraInputSource: signature was not found.");
             return;
         }
 
@@ -103,4 +104,19 @@ internal sealed unsafe class MouseLookHooks(
         _cameraInputSourceHook = null;
         IsCameraInputSourceHookReady = false;
     }
+}
+
+internal unsafe delegate byte AtkModuleHandleInputDelegate(
+    AtkModule* atkModule,
+    UIInputData* inputData,
+    bool isPadMouseModeEnabled);
+
+internal delegate CameraInputSource CameraInputSourceDelegate();
+
+internal enum CameraInputSource
+{
+    None = 0,
+    Keyboard = 1,
+    Analog = 2,
+    MouseDrag = 3,
 }

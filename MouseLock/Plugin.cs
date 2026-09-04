@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Dalamud.Plugin;
 using Dalamud.Interface.Windowing;
 using MouseLock.Windows;
@@ -12,16 +10,12 @@ using MouseLock.UI;
 
 namespace MouseLock;
 
-public sealed class Plugin : IAsyncDalamudPlugin
+public sealed class Plugin : IDalamudPlugin
 {
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
         PluginState.Reset();
-    }
-
-    public Task LoadAsync(CancellationToken cancellationToken)
-    {
         PluginState.Config = ConfigRepository.LoadOrDefault();
         ConfigBackup.DoConfigBackup(Service.PluginInterface);
 
@@ -43,10 +37,9 @@ public sealed class Plugin : IAsyncDalamudPlugin
         PluginState.IpcProvider = new();
 
         ConfigRepository.SaveImmediate(PluginState.Config);
-        return Task.CompletedTask;
     }
 
-    public ValueTask DisposeAsync()
+    public void Dispose()
     {
         PluginState.IpcProvider?.Dispose();
         PluginState.CommandHandler?.Dispose();
@@ -64,7 +57,6 @@ public sealed class Plugin : IAsyncDalamudPlugin
         ConfigRepository.SaveImmediate(PluginState.Config);
 
         PluginState.Reset();
-        return ValueTask.CompletedTask;
     }
 
     private static void DrawUi() => PluginState.WindowSystem.Draw();

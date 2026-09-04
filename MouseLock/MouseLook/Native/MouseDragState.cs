@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.UI;
 
@@ -9,13 +10,13 @@ internal sealed unsafe class MouseDragState
     // The game checks how many pixels the mouse has been moved and will treat it as a click if it's 10 pixels or under.
     private const float NativeClickSuppressionDragDistance = 11.0f;
 
-    private readonly InputManager* _inputManager;
+    private readonly InputManagerState* _inputManager;
 
     public MouseDragState()
     {
         try
         {
-            _inputManager = InputManager.Instance();
+            _inputManager = (InputManagerState*)InputManager.Instance();
             if (_inputManager is null)
             {
                 Service.Logger.Error("Could not resolve InputManager instance.");
@@ -43,7 +44,7 @@ internal sealed unsafe class MouseDragState
             heldMouseButtons |= InputManager.MouseButtonHoldState.Left;
         }
 
-        _inputManager->HeldMouseButtons = heldMouseButtons;
+        _inputManager->MouseButtonHoldStateRaw = (int)heldMouseButtons;
         _inputManager->MouseDragDistance = NativeClickSuppressionDragDistance;
         _inputManager->MouseDragDeltaX = -inputData->CursorInputs.DeltaX;
         _inputManager->MouseDragDeltaY = -inputData->CursorInputs.DeltaY;
@@ -77,7 +78,7 @@ internal sealed unsafe class MouseDragState
 
     private void ReleaseNativeState(int startX, int startY)
     {
-        _inputManager->HeldMouseButtons = InputManager.MouseButtonHoldState.None;
+        _inputManager->MouseButtonHoldStateRaw = (int)InputManager.MouseButtonHoldState.None;
         _inputManager->MouseDragDistance = 0;
         _inputManager->MouseDragDeltaX = 0;
         _inputManager->MouseDragDeltaY = 0;
@@ -86,5 +87,17 @@ internal sealed unsafe class MouseDragState
         _inputManager->MouseDragActive = false;
 
         IsActive = false;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    private struct InputManagerState
+    {
+        [FieldOffset(0x28)] public int MouseButtonHoldStateRaw;
+        [FieldOffset(0x2C)] public float MouseDragDistance;
+        [FieldOffset(0x30)] public int MouseDragDeltaX;
+        [FieldOffset(0x34)] public int MouseDragDeltaY;
+        [FieldOffset(0x38)] public int MouseDragStartX;
+        [FieldOffset(0x3C)] public int MouseDragStartY;
+        [FieldOffset(0x40)] public bool MouseDragActive;
     }
 }

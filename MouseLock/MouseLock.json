@@ -1,0 +1,24 @@
+{
+  "Author": "Zeffuro; API 13 port by cycleapple",
+  "Name": "MouseLock",
+  "InternalName": "MouseLock",
+  "Punchline": "Mouselook without holding right-click.",
+  "Description": "MouseLock keeps FFXIV in mouselook until you actually need the cursor. It pauses for chat, bags, menus, and other UI, and can also turn LMB/RMB into configurable game inputs, hotbar actions, or MouseLock controls.",
+  "RepoUrl": "https://github.com/cycleapple/MouseLock/tree/api13",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "mouse",
+    "mouselook",
+    "cursor",
+    "camera",
+    "movement",
+    "input",
+    "keybind",
+    "hotbar",
+    "qol",
+    "utility"
+  ],
+  "DalamudApiLevel": 13,
+  "IconUrl": "https://raw.githubusercontent.com/cycleapple/MouseLock/api13/Images/icon.png",
+  "AcceptsFeedback": true
+}

@@ -6,5 +6,5 @@ internal static class HotbarSlotTypeExtensions
 {
     public static bool IsItemSlot(this RaptureHotbarModule.HotbarSlotType slotType)
         => slotType is RaptureHotbarModule.HotbarSlotType.Item
-            or RaptureHotbarModule.HotbarSlotType.InventoryItem;
+            || (byte)slotType == 3;
 }

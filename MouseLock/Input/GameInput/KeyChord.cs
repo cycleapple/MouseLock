@@ -1,5 +1,6 @@
 using System;
 using FFXIVClientStructs.FFXIV.Client.System.Input;
+using FFXIVClientStructs.FFXIV.Client.UI;
 
 namespace MouseLock.Input.GameInput;
 

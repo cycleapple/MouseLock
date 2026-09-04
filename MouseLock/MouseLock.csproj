@@ -1,20 +1,8 @@
-﻿<Project Sdk="Dalamud.NET.Sdk/15.0.0">
+﻿<Project Sdk="Dalamud.NET.Sdk/13.0.0">
     <PropertyGroup>
         <Version>1.0.0.3</Version>
         <DebugType>portable</DebugType>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    </PropertyGroup>
-    <PropertyGroup>
-        <Author>Zeffuro</Author>
-        <Name>MouseLock</Name>
-        <InternalName>MouseLock</InternalName>
-        <Punchline>Mouselook without holding right-click.</Punchline>
-        <Description>MouseLock keeps FFXIV in mouselook until you actually need the cursor. It pauses for chat, bags, menus, and other UI, and can also turn LMB/RMB into configurable game inputs, hotbar actions, or MouseLock controls.</Description>
-        <RepoUrl>https://github.com/Zeffuro/MouseLock</RepoUrl>
-        <IconUrl>https://raw.githubusercontent.com/Zeffuro/MouseLock/master/Media/icon.png</IconUrl>
-        <ImageUrls></ImageUrls>
-        <Tags>mouse;mouselook;mouse look;cursor;camera;movement;input;keybind;hotbar;qol;utility</Tags>
-        <AcceptsFeedback>true</AcceptsFeedback>
     </PropertyGroup>
     <ItemGroup>
       <Content Include="changelog.md" />
