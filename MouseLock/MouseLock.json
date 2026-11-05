@@ -18,7 +18,7 @@
     "qol",
     "utility"
   ],
-  "DalamudApiLevel": 13,
+  "DalamudApiLevel": 14,
   "IconUrl": "https://raw.githubusercontent.com/cycleapple/MouseLock/api13/Images/icon.png",
   "AcceptsFeedback": true
 }
